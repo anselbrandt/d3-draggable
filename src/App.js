@@ -22,6 +22,7 @@ function App() {
   );
 
   useEffect(() => {
+    const color = ["steelblue", "hotpink", "tomato"];
     const margin = { top: 40, right: 40, bottom: 40, left: 40 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgHeight - margin.top - margin.bottom;
@@ -165,13 +166,12 @@ function App() {
               })
               .attr("cy", function (d) {
                 return yScale(d[1]);
-              });
+              })
+              .call(drag);
           }
         };
 
-        const dragended = () => {
-          console.log("end");
-        };
+        const dragended = () => {};
 
         const drag = d3
           .drag()
