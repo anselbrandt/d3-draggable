@@ -101,7 +101,7 @@ function App() {
             .data(datum)
             .enter()
             .append("circle")
-            .attr("class", "dot")
+            .attr("class", "dot" + index)
             .style("fill", color[index])
             .attr("r", dotRadius)
             .attr("cx", function (d) {
