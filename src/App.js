@@ -9,10 +9,16 @@ function App() {
   const svgRef = useRef();
   const svgWidth = viewportWidth * 0.8;
   const svgHeight = viewportHeight * 0.7;
+  const color = ["steelblue", "hotpink", "tomato"];
 
-  const data = useRef(d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]));
+  const data = useRef([
+    d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
+    d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
+  ]);
   // const selected = useRef();
-  const [values] = useState(data.current.map((value) => value[1]));
+  const [values] = useState(
+    data.current.map((datum) => datum.map((value) => value[1]))
+  );
 
   useEffect(() => {
     const margin = { top: 40, right: 40, bottom: 40, left: 40 };
@@ -21,7 +27,7 @@ function App() {
     if (data.current) {
       const xScale = d3.scaleLinear().range([0, width]);
       const yScale = d3.scaleLinear().range([height, 0]);
-      const dotRadius = 8;
+      const dotRadius = 5;
 
       const line = d3
         .line()
@@ -76,31 +82,34 @@ function App() {
           .append("g")
           .attr("clip-path", "url(#clip)");
 
-        chartContent
-          .append("path")
-          .datum(data.current)
-          .attr("class", "line")
-          .attr("fill", "none")
-          .attr("stroke", "steelblue")
-          .attr("stroke-linejoin", "round")
-          .attr("stroke-linecap", "round")
-          .attr("stroke-width", 1.5)
-          .attr("d", line);
+        data.current.forEach((datum, index) => {
+          chartContent
+            .append("path")
+            .datum(datum)
+            .attr("class", "line" + index)
+            .attr("fill", "none")
+            .attr("stroke", color[index])
+            .attr("stroke-linejoin", "round")
+            .attr("stroke-linecap", "round")
+            .attr("stroke-width", 1.5)
+            .attr("d", line);
 
-        // dots
-        chartContent
-          .selectAll("circle")
-          .data(data.current)
-          .enter()
-          .append("circle")
-          .attr("class", "dot")
-          .attr("r", dotRadius)
-          .attr("cx", function (d) {
-            return xScale(d[0]);
-          })
-          .attr("cy", function (d) {
-            return yScale(d[1]);
-          });
+          // dots
+          chartContent
+            .selectAll(".dot" + index)
+            .data(datum)
+            .enter()
+            .append("circle")
+            .attr("class", "dot")
+            .style("fill", color[index])
+            .attr("r", dotRadius)
+            .attr("cx", function (d) {
+              return xScale(d[0]);
+            })
+            .attr("cy", function (d) {
+              return yScale(d[1]);
+            });
+        });
       };
       chart();
     }
@@ -116,16 +125,23 @@ function App() {
         Implemented in React
       </div>
       <div style={{ marginTop: "40px" }}>
-        <div
-          style={{
-            width: `${svgWidth}px`,
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          {values.map((value) => (
-            <div style={{ width: "92px" }}>{value.toFixed(2)}</div>
+        <div>
+          {values.map((row, index) => (
+            <div
+              key={index}
+              style={{
+                width: `${svgWidth}px`,
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              {row.map((value, index) => (
+                <div key={index} style={{ width: "92px" }}>
+                  {value.toFixed(2)}
+                </div>
+              ))}
+            </div>
           ))}
         </div>
         <svg ref={svgRef} overflow="visible">
