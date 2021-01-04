@@ -9,9 +9,9 @@ function App() {
   const svgRef = useRef();
   const svgWidth = viewportWidth * 0.8;
   const svgHeight = viewportHeight * 0.7;
-  const color = ["steelblue", "hotpink", "tomato"];
 
   const data = useRef([
+    d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
     d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
     d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
   ]);
@@ -21,6 +21,7 @@ function App() {
   );
 
   useEffect(() => {
+    const color = ["steelblue", "hotpink", "tomato"];
     const margin = { top: 40, right: 40, bottom: 40, left: 40 };
     const width = svgWidth - margin.left - margin.right;
     const height = svgHeight - margin.top - margin.bottom;
