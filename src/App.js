@@ -29,7 +29,7 @@ function App() {
     if (data.current) {
       const xScale = d3.scaleLinear().range([0, width]);
       const yScale = d3.scaleLinear().range([height, 0]);
-      const dotRadius = 5;
+      const dotRadius = 10;
 
       const line = d3
         .line()
@@ -45,6 +45,22 @@ function App() {
         const svg = d3.select(svgRef.current);
         svg.selectAll("g").remove();
         svg.attr("width", `${svgWidth}px`).attr("height", `${svgHeight}px`);
+        svg
+          .append("rect")
+          .attr("fill", "transparent")
+          .attr("width", width)
+          .attr("height", height)
+          .on(
+            "click " +
+              "mouseenter mouseout mousedown mouseup mousemove " +
+              "touchstart touchend touchmove",
+            (event) => {
+              if (event.cancelable) {
+                event.preventDefault();
+              }
+            },
+            false
+          );
 
         xScale.domain([0, 10]);
         yScale.domain([0, 1]);
@@ -114,6 +130,9 @@ function App() {
         });
 
         const dragstarted = (event) => {
+          if (event.cancelable) {
+            event.preventDefault();
+          }
           d3.select(this).raise().classed("active", true);
           const dotCoords = event.subject;
           data.current.forEach((datum, row) => {
@@ -125,6 +144,9 @@ function App() {
         };
 
         const dragged = (event) => {
+          if (event.cancelable) {
+            event.preventDefault();
+          }
           const yVal = yScale.invert(event.y);
           if (Math.sign(event.y) !== -1 && event.y < height) {
             const newData = data.current.map((datum, index) => {
@@ -171,7 +193,11 @@ function App() {
           }
         };
 
-        const dragended = () => {};
+        const dragended = (event) => {
+          if (event.cancelable) {
+            event.preventDefault();
+          }
+        };
 
         const drag = d3
           .drag()
