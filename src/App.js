@@ -17,7 +17,7 @@ function App() {
     d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
   ]);
   const selected = useRef();
-  const [values] = useState(
+  const [values, setValues] = useState(
     data.current.map((datum) => datum.map((value) => value[1]))
   );
 
@@ -117,15 +117,56 @@ function App() {
           const dotCoords = event.subject;
           data.current.forEach((datum, row) => {
             if (datum.includes(dotCoords)) {
-              console.log("row: ", row);
               const col = datum.indexOf(dotCoords);
-              console.log("column: ", col);
+              selected.current = [row, col];
             }
           });
         };
 
-        const dragged = () => {
-          console.log("dragging");
+        const dragged = (event) => {
+          const yVal = yScale.invert(event.y);
+          if (Math.sign(event.y) !== -1 && event.y < height) {
+            const newData = data.current.map((datum, index) => {
+              if (index === selected.current[0]) {
+                return datum.map((value, index) => {
+                  if (index === selected.current[1]) {
+                    return [value[0], yVal];
+                  } else return value;
+                });
+              } else return datum;
+            });
+            data.current = newData;
+            const newValues = newData.map((datum) =>
+              datum.map((value) => value[1])
+            );
+            setValues(newValues);
+            chartContent.select(".line" + selected.current[0]).remove();
+            chartContent
+              .append("path")
+              .datum(newData[selected.current[0]])
+              .attr("class", "line" + selected.current[0])
+              .attr("fill", "none")
+              .attr("stroke", color[selected.current[0]])
+              .attr("stroke-linejoin", "round")
+              .attr("stroke-linecap", "round")
+              .attr("stroke-width", 1.5)
+              .attr("d", line);
+            chartContent.selectAll(".dot" + selected.current[0]).remove();
+            chartContent
+              .selectAll(".dot" + selected.current[0])
+              .data(newData[selected.current[0]])
+              .enter()
+              .append("circle")
+              .attr("class", "dot" + selected.current[0])
+              .style("fill", color[selected.current[0]])
+              .attr("r", dotRadius)
+              .attr("cx", function (d) {
+                return xScale(d[0]);
+              })
+              .attr("cy", function (d) {
+                return yScale(d[1]);
+              });
+          }
         };
 
         const dragended = () => {
@@ -145,7 +186,7 @@ function App() {
       };
       chart();
     }
-  });
+  }, [svgHeight, svgWidth]);
 
   return (
     <div className="App">
