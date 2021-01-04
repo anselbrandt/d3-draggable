@@ -114,7 +114,7 @@ function App() {
       };
       chart();
     }
-  }, [svgRef, svgWidth, svgHeight]);
+  });
 
   return (
     <div className="App">
