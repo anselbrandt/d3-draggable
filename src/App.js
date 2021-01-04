@@ -111,6 +111,29 @@ function App() {
               return yScale(d[1]);
             });
         });
+
+        const dragstarted = () => {
+          console.log("start");
+        };
+
+        const dragged = () => {
+          console.log("dragging");
+        };
+
+        const dragended = () => {
+          console.log("end");
+        };
+
+        const drag = d3
+          .drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended);
+        chartContent.selectAll("circle").call(drag);
+
+        chartContent.on("contextmenu", (event) => {
+          event.preventDefault();
+        });
       };
       chart();
     }
