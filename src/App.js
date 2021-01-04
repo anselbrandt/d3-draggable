@@ -16,7 +16,7 @@ function App() {
     d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
     d3.range(10).map((d, i) => [i, d3.randomUniform(1)()]),
   ]);
-  // const selected = useRef();
+  const selected = useRef();
   const [values] = useState(
     data.current.map((datum) => datum.map((value) => value[1]))
   );
@@ -112,8 +112,16 @@ function App() {
             });
         });
 
-        const dragstarted = () => {
-          console.log("start");
+        const dragstarted = (event) => {
+          d3.select(this).raise().classed("active", true);
+          const dotCoords = event.subject;
+          data.current.forEach((datum, row) => {
+            if (datum.includes(dotCoords)) {
+              console.log("row: ", row);
+              const col = datum.indexOf(dotCoords);
+              console.log("column: ", col);
+            }
+          });
         };
 
         const dragged = () => {
