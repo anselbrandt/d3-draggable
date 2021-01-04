@@ -131,7 +131,7 @@ function App() {
             <div
               key={index}
               style={{
-                width: `${svgWidth}px`,
+                width: `${svgWidth * 0.92}px`,
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-between",
