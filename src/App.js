@@ -21,7 +21,7 @@ function App() {
     if (data.current) {
       const xScale = d3.scaleLinear().range([0, width]);
       const yScale = d3.scaleLinear().range([height, 0]);
-      // const dotRadius = 5;
+      const dotRadius = 8;
 
       const line = d3
         .line()
@@ -86,6 +86,21 @@ function App() {
           .attr("stroke-linecap", "round")
           .attr("stroke-width", 1.5)
           .attr("d", line);
+
+        // dots
+        chartContent
+          .selectAll("circle")
+          .data(data.current)
+          .enter()
+          .append("circle")
+          .attr("class", "dot")
+          .attr("r", dotRadius)
+          .attr("cx", function (d) {
+            return xScale(d[0]);
+          })
+          .attr("cy", function (d) {
+            return yScale(d[1]);
+          });
       };
       chart();
     }
